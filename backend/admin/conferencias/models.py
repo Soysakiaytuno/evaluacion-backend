@@ -14,7 +14,7 @@ class Usuario(BaseModel):
     apellido = models.CharField(max_length=100)
 
     class Meta:
-        db_table = '"content"."usuario"'
+        db_table = 'usuario'
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
 
@@ -27,7 +27,7 @@ class Conferencia(BaseModel):
     fecha_fin = models.DateField()
 
     class Meta:
-        db_table = '"content"."conferencia"'
+        db_table = 'conferencia'
         verbose_name = 'Conferencia'
         verbose_name_plural = 'Conferencias'
 
@@ -39,7 +39,7 @@ class Track(BaseModel):
     nombre = models.CharField(max_length=255)
 
     class Meta:
-        db_table = '"content"."track"'
+        db_table = 'track'
         verbose_name = 'Track'
         verbose_name_plural = 'Tracks'
 
@@ -51,7 +51,7 @@ class Ponente(BaseModel):
     descripcion = models.TextField(blank=True, null=True)
 
     class Meta:
-        db_table = '"content"."ponente"'
+        db_table = 'ponente'
         verbose_name = 'Ponente'
         verbose_name_plural = 'Ponentes'
 
@@ -66,10 +66,10 @@ class Sesion(BaseModel):
     hora_fin = models.DateTimeField()
     capacidad = models.IntegerField(default=50)
     
-    ponentes = models.ManyToManyField(Ponente, db_table='"content"."sesion_ponente"', related_name='sesiones')
+    ponentes = models.ManyToManyField(Ponente, db_table='sesion_ponente', related_name='sesiones')
 
     class Meta:
-        db_table = '"content"."sesion"'
+        db_table = 'sesion'
         verbose_name = 'Sesión'
         verbose_name_plural = 'Sesiones'
 
@@ -81,7 +81,7 @@ class Oyente(BaseModel):
     sesion = models.ForeignKey(Sesion, on_delete=models.CASCADE, db_column='id_sesion', related_name='oyentes')
 
     class Meta:
-        db_table = '"content"."oyente"'
+        db_table = 'oyente'
         verbose_name = 'Oyente'
         verbose_name_plural = 'Oyentes'
         constraints = [
