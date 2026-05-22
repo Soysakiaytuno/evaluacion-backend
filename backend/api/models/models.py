@@ -2,9 +2,8 @@ import uuid
 from sqlalchemy import Column, String, Integer, Date, DateTime, ForeignKey, Text, Table
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from .database import Base
+from ..database import Base
 
-# Tabla intermedia para la relación Muchos a Muchos entre Sesion y Ponente
 sesion_ponente = Table(
     'sesion_ponente',
     Base.metadata,
@@ -29,7 +28,6 @@ class Ponente(Base):
     id_usuario = Column(UUID(as_uuid=True), ForeignKey('content.usuario.id'), nullable=False)
     descripcion = Column(Text)
     
-    # Relación para acceder a los datos de la tabla Usuario (nombre, apellido)
     usuario = relationship("Usuario")
 
 class Conferencia(Base):
@@ -59,7 +57,6 @@ class Sesion(Base):
     hora_fin = Column(DateTime(timezone=True), nullable=False)
     capacidad = Column(Integer, default=50)
     
-    # Relaciones para traer los hijos al buscar una sesión (Requisito del Frontend y API)
     track = relationship("Track")
     ponentes = relationship("Ponente", secondary=sesion_ponente)
     oyentes = relationship("Oyente", back_populates="sesion")
