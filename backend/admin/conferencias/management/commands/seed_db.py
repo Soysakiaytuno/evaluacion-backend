@@ -21,6 +21,7 @@ class Command(BaseCommand):
             DO $$
             DECLARE
                 v_conf_id UUID := uuid_generate_v4();
+                v_fecha_base TIMESTAMPTZ := '2026-05-20 09:00:00+00';
             BEGIN
                 -- Conferencia
                 INSERT INTO content.conferencia (id, nombre, fecha_inicio, fecha_fin, fecha_creacion, fecha_modificacion)
@@ -44,8 +45,8 @@ class Command(BaseCommand):
                     (SELECT id FROM content.track ORDER BY random() LIMIT 1),
                     'Título de Sesión ' || i,
                     'Descripción auto-generada para la sesión ' || i,
-                    NOW() + (i || ' hours')::interval,
-                    NOW() + ((i + 1) || ' hours')::interval,
+                    v_fecha_base + (i || ' hours')::interval,
+                    v_fecha_base + ((i + 1) || ' hours')::interval,
                     600, NOW(), NOW()
                 FROM generate_series(1, 300) s(i);
 

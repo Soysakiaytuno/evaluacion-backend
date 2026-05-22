@@ -1,31 +1,37 @@
 import uuid
 from ..repository.session_repo import SessionRepository
-from ..schemas import SesionListadoSchema, SesionDetalleSchema
+from ..schemas import SesionListadoSchema, SesionDetalleSchema, TrackSchema
 
 class SessionDataService:
     """Servicio encargado de la lógica de negocio y transformación de datos."""
     def __init__(self, repository: SessionRepository):
         self.repository = repository
 
-    def _calculate_available_seats(self, session) -> int:
-        """Calcula la disponibilidad restando los oyentes a la capacidad total."""
-        return max(0, session.capacidad - len(session.oyentes))
+    def get_tracks_formatted(self) -> list:
+        tracks = self.repository.get_tracks()
+        return [TrackSchema.model_validate(t).model_dump(mode="json") for t in tracks]
 
-    def get_all_formatted(self, skip: int, limit: int) -> dict:
-        db_sessions = self.repository.get_all(skip=skip, limit=limit)
-        total = self.repository.count_all()
+    def _prepare_session(self, session):
+        """Prepara los campos calculados que requiere el frontend."""
+        session.registered = len(session.oyentes) if session.oyentes else 0
+        session.asientos_disponibles = max(0, session.capacidad - session.registered)
+        for p in session.ponentes:
+            p.nombre_completo = f"{p.usuario.nombre} {p.usuario.apellido}"
+        return session
+
+    def get_sessions_formatted(self, page: int, page_size: int, q: str = None, track: str = None, day: str = None, tz: str = 'UTC') -> dict:
+        skip = (page - 1) * page_size
+        db_sessions = self.repository.get_sessions(q=q, track_id=track, skip=skip, limit=page_size, day=day, tz=tz)
+        total = self.repository.count_sessions(q=q, track_id=track, day=day, tz=tz)
 
         items = []
         for session in db_sessions:
-            session.asientos_disponibles = self._calculate_available_seats(session)
+            self._prepare_session(session)
             items.append(SesionListadoSchema.model_validate(session).model_dump(mode="json"))
 
         return {
-            "total": total,
-            "page": (skip // limit) + 1 if limit > 0 else 1,
-            "size": limit,
-            "pages": (total + limit - 1) // limit if limit > 0 else 1,
-            "items": items
+            "count": total,
+            "results": items
         }
 
     def get_by_id_formatted(self, session_id: uuid.UUID) -> dict | None:
@@ -33,16 +39,5 @@ class SessionDataService:
         if not session:
             return None
 
-        session.asientos_disponibles = self._calculate_available_seats(session)
+        self._prepare_session(session)
         return SesionDetalleSchema.model_validate(session).model_dump(mode="json")
-
-    def search_formatted(self, query: str, skip: int, limit: int) -> dict:
-        db_sessions = self.repository.search(query=query, skip=skip, limit=limit)
-        total = self.repository.count_search(query=query)
-
-        items = []
-        for session in db_sessions:
-            session.asientos_disponibles = self._calculate_available_seats(session)
-            items.append(SesionListadoSchema.model_validate(session).model_dump(mode="json"))
-
-        return {"total": total, "items": items}

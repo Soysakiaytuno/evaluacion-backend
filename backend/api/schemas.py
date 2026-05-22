@@ -4,52 +4,45 @@ from pydantic import BaseModel, Field, ConfigDict
 
 class ConferenciaSchema(BaseModel):
     id: uuid.UUID
-    nombre: str
-    model_config = ConfigDict(from_attributes=True)
+    name: str = Field(validation_alias="nombre")
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 class UsuarioSchema(BaseModel):
-    nombre: str
-    apellido: str
-
-    model_config = ConfigDict(from_attributes=True)
+    first_name: str = Field(validation_alias="nombre")
+    last_name: str = Field(validation_alias="apellido")
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 class PonenteSchema(BaseModel):
-    descripcion: str | None
-    usuario: UsuarioSchema
-
-    model_config = ConfigDict(from_attributes=True)
+    name: str = Field(validation_alias="nombre_completo")
+    affiliation: str | None = Field(None, validation_alias="descripcion")
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 class TrackSchema(BaseModel):
     id: uuid.UUID
-    nombre: str
-
-    model_config = ConfigDict(from_attributes=True)
+    name: str = Field(validation_alias="nombre")
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 class SesionBase(BaseModel):
     id: uuid.UUID
-    titulo: str
-    descripcion: str | None = Field(None, description="Descripción de lo que trata la sesión")
-    hora_inicio: datetime
-    hora_fin: datetime
-    capacidad: int
+    title: str = Field(validation_alias="titulo")
+    abstract: str | None = Field(default=None, validation_alias="descripcion")
+    starts_at: datetime = Field(validation_alias="hora_inicio")
+    ends_at: datetime = Field(validation_alias="hora_fin")
+    capacity: int = Field(validation_alias="capacidad")
+    registered: int = Field(default=0)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 class SesionDetalleSchema(SesionBase):
     track: TrackSchema
-    ponentes: list[PonenteSchema] = []
-    asientos_disponibles: int = Field(..., description="Cálculo en vivo: (capacidad - total de oyentes)")
-
-    model_config = ConfigDict(from_attributes=True)
+    speakers: list[PonenteSchema] = Field(default=[], validation_alias="ponentes")
+    available_seats: int = Field(..., validation_alias="asientos_disponibles")
 
 class SesionListadoSchema(SesionBase):
     track: TrackSchema
-    asientos_disponibles: int = Field(..., description="Cálculo en vivo: (capacidad - total de oyentes)")
-
-    model_config = ConfigDict(from_attributes=True)
+    speakers: list[PonenteSchema] = Field(default=[], validation_alias="ponentes")
+    available_seats: int = Field(..., validation_alias="asientos_disponibles")
 
 
 class PaginatedSesionResponse(BaseModel):
-    total: int
-    page: int
-    size: int
-    pages: int
-    items: list[SesionListadoSchema]
+    count: int
+    results: list[SesionListadoSchema]

@@ -15,5 +15,6 @@ app.add_middleware(
 )
 
 @app.get("/healthz", tags=["Health"])
+@app.get("/api/v1/healthz", tags=["Health"], include_in_schema=False)
 def health_check():
     return {"status": "ok"}
