@@ -39,3 +39,11 @@ Se implementó el **Inventory / capacity enforcement**. La base de datos tiene u
 
 - **De lo que estoy más orgulloso:** Siento que el modelo de base de datos implementado es bueno y a la vez simple, pudiendo cumplir principalmente el problema planteado y resolver
 - **Lo que mejoraría con más tiempo:** Tal vez alguna reestructuracion de como esta manejado el fast api, siento que si bien se usaron patrones y se separaron muchas logicas pues, siento que eso se puede mejorar con un analisis de mas tiempo
+
+## 🏁 Defensa
+B5
+- **Que hice:** hice que hubiera un filtrado de sesiones para una agenda, donde puedas ver las sesiones que tienes, los conflictos, y el total de sesiones en tiempo y la cantidad de conflictos
+- **Como lo hice:** lo que hice fue primero en repo crear una funcion que se encargue de traer todas las sesiones relacionadas a un oyente, despues cree un nuevo schema con los datos pedidos (sesiones, conflictos, total y total de conflictos), para despues en la capa de servicio ir agregando el obtener agenda, donde con los datos para el total, conflictos y total de conflictos los voy filtrando y agregando al esquema de a poco retornandolo para que despues se lo mande al router que se encargara de levantar el endpoint 
+- **Por que lo hice:** lo hice asi mas que nada para poder tener una forma mucho mas sencilla de como filtrar los conflictos, contarlos sin queries complejos
+- **Que me falto:** Lo que me falto fue mas que nada fue hacer que pasara correctamente en formato json, ya que teniendo en cuenta para que sea un pase correcto al endpont
+- **Como lo terminaria:** Usaria lo que es el model dump para convertirlo a formato json, y tal mejoraria el como pasa los datos de los squemas, ya que si bien pasa las sesiones, pasa todos los datos de las sesiones, un mejor select que solo haya tomado los datos vitales tambien siento que ha hecho falta
