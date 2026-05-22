@@ -11,6 +11,11 @@ DECLARE
     j INT;
     k INT;
 BEGIN
+
+    -- Validar si ya existen datos para no volver a poblar y evitar errores
+    IF EXISTS (SELECT 1 FROM content.conferencia LIMIT 1) THEN
+        RETURN;
+    END IF;
     
     INSERT INTO content.conferencia (id, nombre, fecha_inicio, fecha_fin)
     VALUES (v_conf_id, 'Global Developer Summit 2026', '2026-05-20', '2026-05-22');
