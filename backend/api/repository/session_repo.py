@@ -23,7 +23,7 @@ class SessionRepository:
         return self.db.query(Sesion).options(
             joinedload(Sesion.track),
             selectinload(Sesion.oyentes),
-            selectinload(Sesion.ponentes).joinedload(Ponente.usuario) # Trae al ponente y su info de usuario
+            selectinload(Sesion.ponentes).joinedload(Ponente.usuario)
         ).filter(Sesion.id == session_id).first()
 
     def search(self, query: str, skip: int = 0, limit: int = 10):
