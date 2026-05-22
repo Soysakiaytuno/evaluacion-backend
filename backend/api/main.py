@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from .routers import session_router
 app = FastAPI()
+
+app.include_router(session_router.router)
 
 # Permitir CORS (útil si pruebas el frontend localmente sin Nginx)
 app.add_middleware(
