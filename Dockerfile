@@ -4,7 +4,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
-RUN groupadd -r web && useradd -r -g web web
+RUN groupadd -r web && useradd -m -r -g web web
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 COPY --chown=web:web . /app/

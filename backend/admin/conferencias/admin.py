@@ -45,4 +45,5 @@ class PonenteAdmin(admin.ModelAdmin):
 class OyenteAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'sesion', 'fecha_creacion')
     search_fields = ('usuario__nombre', 'sesion__titulo')
-    list_filter = ('sesion',)
+    list_filter = ('fecha_creacion',)
+    raw_id_fields = ('usuario', 'sesion')

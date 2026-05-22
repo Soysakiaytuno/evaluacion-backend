@@ -7,8 +7,8 @@ from ..database import Base
 sesion_ponente = Table(
     'sesion_ponente',
     Base.metadata,
-    Column('id_sesion', UUID(as_uuid=True), ForeignKey('content.sesion.id'), primary_key=True),
-    Column('id_ponente', UUID(as_uuid=True), ForeignKey('content.ponente.id'), primary_key=True),
+    Column('sesion_id', UUID(as_uuid=True), ForeignKey('content.sesion.id'), primary_key=True),
+    Column('ponente_id', UUID(as_uuid=True), ForeignKey('content.ponente.id'), primary_key=True),
     schema='content'
 )
 

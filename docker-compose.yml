@@ -50,9 +50,9 @@ services:
         python manage.py collectstatic --noinput
         python manage.py makemigrations
         python manage.py migrate
-        python manage.py shell -c "from django.db import connection; cursor = connection.cursor(); cursor.execute(open('../../bd/poblacion.ddl', 'r', encoding='utf-8').read()); connection.commit()" || true
+        python manage.py seed_db
         python manage.py createsuperuser --noinput || true
-        exec gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+        exec gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')\" || exit 1"]
       interval: 15s
@@ -74,7 +74,7 @@ services:
     command:
       - /bin/bash
       - -c
-      - "cd backend/api && uvicorn main:app --host 0.0.0.0 --port 8001"
+      - "uvicorn backend.api.main:app --host 0.0.0.0 --port 8001"
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8001/healthz')\" || exit 1"]
       interval: 15s
