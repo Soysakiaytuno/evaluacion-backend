@@ -53,3 +53,8 @@ class SessionRepository:
             selectinload(Sesion.oyentes),
             selectinload(Sesion.ponentes).joinedload(Ponente.usuario)
         ).filter(Sesion.id == session_id).first()
+    
+    def get_agenda_usuario(self, oyente_id: uuid.UUID):
+        return self.db.query(Sesion).options(
+            selectinload(Sesion.oyentes),
+            ).filter(Sesion.oyentes == oyente_id).order_by(Sesion.hora_inicio)

@@ -1,6 +1,6 @@
 import uuid
 from ..repository.session_repo import SessionRepository
-from ..schemas import SesionListadoSchema, SesionDetalleSchema, TrackSchema
+from ..schemas import SesionListadoSchema, SesionDetalleSchema, TrackSchema, AgendaUsuario
 
 class SessionDataService:
     """Servicio encargado de la lógica de negocio y transformación de datos."""
@@ -41,3 +41,22 @@ class SessionDataService:
 
         self._prepare_session(session)
         return SesionDetalleSchema.model_validate(session).model_dump(mode="json")
+    
+    def get_agenda(self, oyente_id: uuid.UUID):
+        agenda = self.repository.get_agenda_usuario(oyente_id)
+        count_conflict: int = 0
+        resultado: AgendaUsuario
+        resultado.sesiones = agenda
+        previo = agenda[0]
+        duraciones = previo.hora_inicio + previo.hora_fin
+        for sesiones in agenda:
+            if previo.id != sesiones.id:
+                if (previo.hora_inicio >= sesiones.hora_inicio and previo.hora_inicio <= sesiones.hora_fin) or (previo.hora_fin <= sesiones.hora_fin and previo.hora_fin >= sesiones.hora_inicio):
+                    resultado.conflictos.add(sesiones)
+                    resultado.conflictos.add(previo)
+                    count_conflict += 1
+                duraciones += (sesiones.hora_fin + sesiones.hora_fin)
+                previo = sesiones
+        resultado.total = duraciones
+        resultado.total_conflictos = count_conflict
+        return resultado

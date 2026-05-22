@@ -46,3 +46,10 @@ class SesionListadoSchema(SesionBase):
 class PaginatedSesionResponse(BaseModel):
     count: int
     results: list[SesionListadoSchema]
+
+class AgendaUsuario(BaseModel):
+    sesiones: list[SesionBase]
+    conflictos: list[SesionBase]
+    total: int
+    total_conflictos: int
+

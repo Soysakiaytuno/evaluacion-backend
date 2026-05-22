@@ -1,0 +1,9 @@
+{
+    "editor.suggest.selectionMode": "never",
+    "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "off",
+        "strings": "off"
+    },
+    "editor.inlineSuggest.enabled": false
+}

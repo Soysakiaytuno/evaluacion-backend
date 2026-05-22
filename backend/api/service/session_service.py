@@ -42,3 +42,6 @@ class SessionService:
         if response:
             self.cache_service.set(cache_key, response)
         return response
+    def get_agenda(self, oyente_id: uuid.UUID):
+        response = self.data_service.get_agenda(oyente_id)
+        return response

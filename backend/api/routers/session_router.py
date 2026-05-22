@@ -29,3 +29,10 @@ def get_session(session_id: uuid.UUID, service: SessionService = Depends(get_ses
     if not result:
         raise HTTPException(status_code=404, detail="Sesión no encontrada")
     return result
+
+@router.get("/users/{id}/agenda")
+def get_agenda(id: uuid.UUID, service: SessionService = Depends(get_session_service)):
+    result = service.get_agenda(id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Sesión no encontrada")
+    return result
