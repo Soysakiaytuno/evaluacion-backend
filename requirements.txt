@@ -6,6 +6,7 @@ gunicorn
 uvicorn[standard]
 
 psycopg2-binary
+sqlalchemy
 redis
 whitenoise
 
